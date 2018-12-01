@@ -8,7 +8,7 @@ def calc(filename):
   sum = 0
   with open(filename) as file:
     for line in file:
-      print line,
+      #print line,
       sum += int(line)
     print 'sum:', sum
 
