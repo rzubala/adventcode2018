@@ -31,13 +31,24 @@ def compare(txt1, txt2):
       return False
   return cnt == 1
 
+def printCommon(t1, t2):
+  i = 0  
+  res = []  
+  for c in list(t1):
+    if c == t2[i]:
+      res.append(c)
+    i += 1
+  print ''.join(res)  
+
 def findClose(lines):
-  for t1 in lines:
-    for t2 in lines:
+  size = len(lines)
+  for i in range(0, size - 1):
+    t1 = lines[i]  
+    for j in range(i+1, size):
+      t2 = lines[j]  
       if t1 != t2:
         if compare(t1, t2):
-          print t1
-          print t2
+          printCommon(t1, t2)  
           return
 
 def calc(filename):
