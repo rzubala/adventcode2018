@@ -67,14 +67,19 @@ def findNotOverlapId(parts):
   overs = []  
   for i in range(0, l-1):
     p1 = parts[i]
+    found = False
     for j in range(i+1, l):
       p2 = parts[j]
       over = isOverlaps(p1, p2)
+      found |= over
       if over:
         if p1[0] not in overs:
           overs.append(p1[0])
         if p2[0] not in overs:
           overs.append(p2[0])
+    if not found:
+      print 'Found:', p1[0]
+
   for p in parts:
     if p[0] not in overs:
       print 'Found:', p[0]
