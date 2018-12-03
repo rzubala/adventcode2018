@@ -5,20 +5,16 @@ import re
 
 def parse(line):
   s = re.search( r'#(\d+) @ (\d+),(\d+): (\d+)x(\d+)', line)
-  id = 0
-  x = 0
-  y = 0
-  w = 0
-  h = 0     
   if (s):
     id = int(s.group(1))  
     x = int(s.group(2))  
     y = int(s.group(3))  
     w = int(s.group(4))  
     h = int(s.group(5))
+    return (id, x, y, w, h)
   else:
     print 'Parse error', line  
-  return (id, x, y, w, h)
+    return (0,0,0,0,0)
 
 def findMax(parts):
   mX = 0
@@ -58,7 +54,7 @@ def isOverlaps(p1, p2):
   l2y = p2[2]
   r2x = p2[1] + p2[3] 
   r2y = p2[2] + p2[4] 
-  if ((l1x<r2x) and (r1x>l2x) and (l1y<r2y) and (r1y>l2y)):
+  if l1x<r2x and r1x>l2x and l1y<r2y and r1y>l2y:
     return True
   return False    
 
