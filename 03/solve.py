@@ -38,7 +38,6 @@ def isOverlap(i, j, parts):
     if i >= p[1] and i < p[1] + p[3] and j >= p[2] and j < p[2] + p[4]:
       cnt += 1
     if cnt > 1:
-      #print i,j,'->',p,'=',cnt
       return True
   return False  
 
@@ -50,6 +49,37 @@ def findOverlaps(size, parts):
         cnt += 1
   return cnt      
 
+def isOverlaps(p1, p2):
+  l1x = p1[1]
+  l1y = p1[2]
+  r1x = p1[1] + p1[3] 
+  r1y = p1[2] + p1[4]  
+  l2x = p2[1]
+  l2y = p2[2]
+  r2x = p2[1] + p2[3] 
+  r2y = p2[2] + p2[4] 
+  if ((l1x<r2x) and (r1x>l2x) and (l1y<r2y) and (r1y>l2y)):
+    return True
+  return False    
+
+def findNotOverlapId(parts):
+  l = len(parts)
+  overs = []  
+  for i in range(0, l-1):
+    p1 = parts[i]
+    for j in range(i+1, l):
+      p2 = parts[j]
+      over = isOverlaps(p1, p2)
+      if over:
+        if p1[0] not in overs:
+          overs.append(p1[0])
+        if p2[0] not in overs:
+          overs.append(p2[0])
+  for p in parts:
+    if p[0] not in overs:
+      print 'Found:', p[0]
+      return
+
 def calc(filename):
   parts = []  
   with open(filename) as file:
@@ -57,9 +87,11 @@ def calc(filename):
       p = parse(line)
       parts.append(p)
   size = findMax(parts)
-  print size  
-  res = findOverlaps(size, parts)  
-  print 'Overlaps:',res  
+  #part1
+  #res = findOverlaps(size, parts)  
+  #print 'Overlaps:',res  
+  #part2
+  findNotOverlapId(parts)  
 
 def main():
   args = sys.argv[1:]
