@@ -68,13 +68,46 @@ def getMostMinute(sId, result):
         stat[i] = cnt +1 
     elif r[3]:
       last = 0
-  return sorted(stat, key=stat.get, reverse=True)[0] 
+  minute = sorted(stat, key=stat.get, reverse=True)[0] 
+  return (sId, minute)      
+
+def getMostFrequentMinute(result):
+  ids = {}
+  last = 0
+  for r in result:
+    if r[2]:
+      last = r[0]
+      continue
+    elif r[3]:
+      cur = r[0]
+      id = r[1]
+      stat = ids.get(id, {})
+      for i in range(last.minute, cur.minute):
+        cnt = stat.get(i, 0)
+        stat[i] = cnt +1 
+      ids[id] = stat    
+    else:
+      last = 0
+        
+  maxFreq = -1
+  maxMinute = -1
+  maxId = -1      
+  for i in ids:
+    stat = ids[i]    
+    minute = sorted(stat, key=stat.get, reverse=True)[0]
+    if stat[minute] > maxFreq:
+      maxMinute = minute
+      maxId = i
+      maxFreq = stat[minute]
+  return (maxId, maxMinute)      
 
 def parse(filename):
   result = readLines(filename)
   sleepId = getMostSleepId(result)
   minute = getMostMinute(sleepId, result)  
-  print sleepId, minute, sleepId*minute
+  print 'part1:', minute[0], minute[1], minute[0]*minute[1]
+  mfreq = getMostFrequentMinute(result)  
+  print 'part2:', mfreq[0], mfreq[1], mfreq[0]*mfreq[1]
 
 def main():
   args = sys.argv[1:]
