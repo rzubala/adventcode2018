@@ -1,2 +1,4 @@
-# adventcode2018
+#AdventOfCode
+
+adventcode2018
 https://adventofcode.com
