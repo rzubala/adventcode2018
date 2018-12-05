@@ -2,7 +2,8 @@
 
 import sys
 
-def parse(ar):
+def reduce(a):
+  ar = a[:]  
   i = 0  
   while True:
     if i+1 >= len(ar):
@@ -14,7 +15,10 @@ def parse(ar):
         i -= 1
       continue  
     i += 1
-  print 'length:',len(ar)  
+  return len(ar)
+
+def parse(a):
+  print 'length:', reduce(a)  
 
 def calc(filename):
   with open(filename) as file:
