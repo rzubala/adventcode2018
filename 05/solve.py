@@ -1,6 +1,8 @@
 #!/usr/bin/python -tt
 
 import sys
+from string import ascii_lowercase
+
 
 def reduce(a):
   ar = a[:]  
@@ -18,12 +20,20 @@ def reduce(a):
   return len(ar)
 
 def parse(a):
-  print 'length:', reduce(a)  
+  print 'length:', reduce(list(a)) 
+  min = len(a)  
+  for c in ascii_lowercase:
+    tmp = a.replace(c, '')
+    tmp = tmp.replace(c.upper(), '')
+    cur = reduce(list(tmp))
+    if cur < min:
+      min = cur
+  print min  
 
 def calc(filename):
   with open(filename) as file:
     for line in file:
-      ar = list(line.strip())
+      ar = line.strip()
       parse(ar)
       return
 
