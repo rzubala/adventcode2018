@@ -76,9 +76,30 @@ def calcDist(cords):
   inf = findInf(points, size)
   maxCnt = findMax(points, size, inf)  
 
+def calcSumDist(cords):
+  points = 0  
+  size = max(cords)
+  for y in range (0, size[1]):
+    for x in range (0, size[0]):
+      p = (x,y)
+      tot = 0
+      for c in cords:
+        d = dist(p, c)
+        tot += d
+        #if tot >= 32:
+        if tot >= 10000:
+          tot = -1
+          break
+      if tot > 0:
+        points += 1
+  print 'Area size', points
+
 def parse(filename):
   cords = readCords(filename)
-  dist = calcDist(cords)  
+  #part1
+  #dist = calcDist(cords)
+  #part2  
+  calcSumDist(cords)  
 
 def main():
   args = sys.argv[1:]
