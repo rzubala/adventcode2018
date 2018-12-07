@@ -18,14 +18,16 @@ def getNodes(filename):
   return nodes
 
 def getStartNode(nodes):
-  tmp = []  
+  tmp = [] 
+  first = []  
   for n in nodes:
     for s in nodes[n]: 
       if s not in tmp: tmp.append(s)
   print ''.join(tmp)  
   for n in nodes:
-    if n not in tmp: return n
-  return None
+    if n not in tmp: 
+      first.append(n)
+  return sorted(first)
 
 def getLastNode(nodes):
   tmp = []  
@@ -37,27 +39,33 @@ def getLastNode(nodes):
 
 def findStep(root, nodes, steps):
   if root not in nodes: return []
-  print root, '--'  
   st = nodes[root]
   res = []
   for s in st:
     if s not in steps and s in nodes:
       if s not in res: res.append(s)
     else:
-      print s, ' <--'  
       tmp = findStep(s, nodes, steps)
       for t in tmp:
         if t not in res: res.append(t)
   return res
 
-def findPath(root, end, nodes):
-  steps = [root]  
+def findPath(roots, end, nodes):
+  steps = []  
   while True:
-    res = findStep(root, nodes, steps)
-    if not res: break
-    res = sorted(res)
-    steps.append(res[0])  
-    print 'found',' '.join(res)
+    elem = None
+    for root in roots:
+      if root not in steps:
+        res = [root]
+      else:
+        res = findStep(root, nodes, steps)
+      if not res: continue
+      res = sorted(res)
+      if not elem or res[0] < elem:
+        elem = res[0]
+    if not elem:
+      break
+    steps.append(elem)  
   steps.append(end)              
   print 'steps', ''.join(steps)
 
