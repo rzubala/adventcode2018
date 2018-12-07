@@ -20,7 +20,9 @@ def getNodes(filename):
 def getStartNode(nodes):
   tmp = []  
   for n in nodes:
-    for s in nodes[n]: tmp.append(s)
+    for s in nodes[n]: 
+      if s not in tmp: tmp.append(s)
+  print ''.join(tmp)  
   for n in nodes:
     if n not in tmp: return n
   return None
@@ -35,12 +37,14 @@ def getLastNode(nodes):
 
 def findStep(root, nodes, steps):
   if root not in nodes: return []
+  print root, '--'  
   st = nodes[root]
   res = []
   for s in st:
     if s not in steps and s in nodes:
       if s not in res: res.append(s)
     else:
+      print s, ' <--'  
       tmp = findStep(s, nodes, steps)
       for t in tmp:
         if t not in res: res.append(t)
@@ -53,20 +57,20 @@ def findPath(root, end, nodes):
     if not res: break
     res = sorted(res)
     steps.append(res[0])  
-    print 'res',' '.join(res)
+    print 'found',' '.join(res)
   steps.append(end)              
   print 'steps', ''.join(steps)
 
 def parse(filename):
   nodes = getNodes(filename)
-  start = getStartNode(nodes) 
   root = getStartNode(nodes)
   last = getLastNode(nodes)
   findPath(root, last, nodes)
 
-  #print root  
-  #for n in nodes:
-  #  print n, ':', ' '.join(nodes[n])    
+  print '***'  
+  print root, '->', last  
+  for n in nodes:
+    print n, ':', ' '.join(nodes[n])    
 
 def main():
   args = sys.argv[1:]
