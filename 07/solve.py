@@ -23,7 +23,6 @@ def getStartNode(nodes):
   for n in nodes:
     for s in nodes[n]: 
       if s not in tmp: tmp.append(s)
-  print ''.join(tmp)  
   for n in nodes:
     if n not in tmp: 
       first.append(n)
@@ -37,13 +36,28 @@ def getLastNode(nodes):
     if t not in nodes: return t
   return None
 
+def findKeys(nodes, s):
+  res = []  
+  for n in nodes:
+    ar = nodes[n]
+    if s in ar:
+      res.append(n)
+  return res
+
 def findStep(root, nodes, steps):
   if root not in nodes: return []
   st = nodes[root]
   res = []
   for s in st:
     if s not in steps and s in nodes:
-      if s not in res: res.append(s)
+      if s not in res: 
+        keys = findKeys(nodes, s)
+        add = True
+        for k in keys:
+          if k not in steps:
+            add = False
+            break
+        if add: res.append(s) 
     else:
       tmp = findStep(s, nodes, steps)
       for t in tmp:
