@@ -82,12 +82,72 @@ def findPath(roots, end, nodes):
     steps.append(elem)  
   steps.append(end)              
   print 'steps', ''.join(steps)
+  return steps                
+
+def isEnd(workers):
+  for w in workers:
+    if workers[w][1]:
+      return False
+  return True  
+
+def inprocess(workers):
+  result = []  
+  for w in workers:
+    if workers[w][1]:
+      result.append(workers[w][1])
+  return result
+
+def getNextTask(roots, last, nodes, done, processing):
+  while True:
+    elem = None
+    for root in roots:
+      if root not in done:
+        res = [root]
+      else:
+        res = findStep(root, nodes, done)
+      if not res: continue
+      filtered = []            
+      for r in res:
+        if r not in processing:
+          filtered.append(r)        
+      res = sorted(filtered)
+      if not res: continue
+      if not elem or res[0] < elem:
+        elem = res[0]
+    return elem              
+    
+def countWorkTime(root, last, nodes):
+  done = []  
+  workers = {}
+  for r in range(1,6):
+    workers[r] = (0, None) 
+  time = 0
+  while True:
+    for w in workers:
+      if not workers[w][1] or workers[w][0] <= time:
+        if workers[w][1]:
+          done.append(workers[w][1])
+        workers[w] = (0, None)
+          
+        nextTask = getNextTask(root, last, nodes, done, inprocess(workers))
+
+        if nextTask:
+          taskTime = time + 60 + ord(nextTask) - ord('A') + 1
+          workers[w] = (taskTime, nextTask)
+          print time,':', w, nextTask, taskTime  
+
+    if isEnd(workers):     
+      print 'Total time:', time + 60 + ord(last) - ord('A')  
+      break 
+    time += 1
 
 def parse(filename):
   nodes = getNodes(filename)
   root = getStartNode(nodes)
   last = getLastNode(nodes)
-  findPath(root, last, nodes)
+  #part1
+  steps = findPath(root, last, nodes)
+  countWorkTime(root, last, nodes)
 
   print '***'  
   print root, '->', last  
