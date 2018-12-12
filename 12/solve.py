@@ -52,13 +52,11 @@ def rdots(i):
 
 def calc(filename, gen):
   state, pattern = parse(filename)
-  
   state = '...' + state
-    
   g = 0
+  last = None  
   while g < gen:
-  #for g in range (0,gen):  
-    #print state
+    last = sumState(state, gen)
     newState = []
     l = len(state)
     for i in range(-2, l + 2):
@@ -69,7 +67,6 @@ def calc(filename, gen):
       else:
         comp = state[i-2:i+3]
 
-      #print i, comp, i-l,i,l
       for p in pattern:
         plant = False
         if isNextPlant(comp, p, '#') == '#':
@@ -77,13 +74,11 @@ def calc(filename, gen):
           break
       newState.append('#') if plant else newState.append('.')
     state = ''.join(newState[2:-1])
-    #break
-    if g % 1000 == 0:
-      print gen, '/', g
     g += 1  
   
-  print state  
-  print sumState(state, gen)    
+  sum = sumState(state, gen)    
+  print 'sum', g, sumState(state, gen)  
+  return (sum, sum - last)
 
 def main():
   args = sys.argv[1:]
@@ -93,7 +88,11 @@ def main():
     sys.exit(1)
   
   calc(args[0], 20)
-  #calc(args[0], 50000000000)
-  
+
+  gen = 200  
+  sum, diff = calc(args[0], gen)
+  gen2 = 50000000000
+  print gen2, ':', sum + (gen2 - gen) * diff 
+    
 if __name__ == '__main__':
   main()
