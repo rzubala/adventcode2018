@@ -21,32 +21,69 @@ def parse(filename):
   return (state, res)     
 
 def sumState(state, gen):
-  i = 0 - gen
+  i = -3
   sum = 0
   for p in list(state):
     sum += i if p == '#' else 0
     i += 1
   return sum  
 
-def calc(filename):
+def ldots(i):
+  if i == -2:
+    return '....'
+  elif i == -1:
+    return '...'
+  elif i == 0:
+    return '..'
+  elif i == 1:
+    return '.'
+  return ''  
+
+def rdots(i):
+  if i == 1:
+    return '....'
+  elif i == 0:
+    return '...'
+  elif i == -1:
+    return '..'
+  elif i == -2:
+    return '.'
+  return ''  
+
+def calc(filename, gen):
   state, pattern = parse(filename)
-  print '\n'.join(pattern)  
   
-  for g in range (0,20):  
-    state = '...' + state + '...'
-    print state
+  state = '...' + state
+    
+  g = 0
+  while g < gen:
+  #for g in range (0,gen):  
+    #print state
     newState = []
-    for i in range(0, len(state) - 5 + 1):
+    l = len(state)
+    for i in range(-2, l + 2):
+      if i < 2:
+        comp = ldots(i) + state[0:i+3]
+      elif i > l-3:
+        comp = state[i-2:l] + rdots(i-l)  
+      else:
+        comp = state[i-2:i+3]
+
+      #print i, comp, i-l,i,l
       for p in pattern:
         plant = False
-        if isNextPlant(state[i:i+5], p, '#') == '#':
+        if isNextPlant(comp, p, '#') == '#':
           plant = True
           break
       newState.append('#') if plant else newState.append('.')
-    state = ''.join(newState)
+    state = ''.join(newState[2:-1])
+    #break
+    if g % 1000 == 0:
+      print gen, '/', g
+    g += 1  
   
   print state  
-  print sumState(state, 20)    
+  print sumState(state, gen)    
 
 def main():
   args = sys.argv[1:]
@@ -55,7 +92,8 @@ def main():
     print 'usage: input.data '
     sys.exit(1)
   
-  calc(args[0])
+  calc(args[0], 20)
+  #calc(args[0], 50000000000)
   
 if __name__ == '__main__':
   main()
