@@ -26,7 +26,7 @@ def findCarts(track):
       if tx == '^' or tx == 'v' or tx == '>' or tx == '<':
         tmp = tx
       if tmp:
-        carts.append((x,y,tmp,0))
+        carts.append((x,y,tmp,0,0))
         replaceCart(ty, x, tmp)
       x += 1  
     y += 1
@@ -37,6 +37,7 @@ def moveCart(track, cart):
   c = cart[3]
   x = cart[0]  
   y = cart[1]
+  m = cart[4]  
   if s == 'v':
     y += 1
   elif s == '^':
@@ -85,7 +86,7 @@ def moveCart(track, cart):
         s = 'v'
     c += 1
     
-  return (x,y,s,c)
+  return (x,y,s,c, m+1)
 
 def findColision(carts):
   for c in carts:
@@ -94,24 +95,65 @@ def findColision(carts):
       return (c[0], c[1])
   return None  
 
+def removeColisions(track, carts):
+  res = []
+  toremove = []  
+  for c in carts:
+    tmp = [cart for cart in carts if cart[0] == c[0] and cart[1] == c[1]]
+    if len(tmp) > 1:
+      for t in tmp:
+        toremove.append(t);
+  for c in carts:
+    if c not in toremove:
+      res.append(c)
+  return res  
+
+def allmoved(carts, m):
+  for c in carts:
+    if c[4] != m:
+       return False;
+  return True     
 
 def moveCarts(track, carts):
+  m = 1  
   while True:
     carts = sorted(carts, key=lambda tup: (tup[1],tup[0]) )
-    newCarts = []
-    for c in carts:
-      newCarts.append(moveCart(track, c))
-    carts = newCarts
+    while True:
+      i = -1
+      for c in carts:
+        i += 1
+        if c[4] == m:
+          continue
+        c = moveCart(track, c)
+        carts[i] = c
+        tmp = len(carts)
+        #part2
+        carts = removeColisions(track, carts)
+        if len(carts) != tmp:
+          break
+      if allmoved(carts, m):
+        break
+    m += 1
 
-    printAll(track, carts)
-    colision = findColision(carts)
-    if colision:
-      print 'colision:',colision
-      break;  
+    #printAll(track, carts)
+    
+    #part1
+    #colision = findColision(carts)
+    #if colision:
+    #  print 'colision:',colision
+    #  break;
+    
+    #part2
+    if len(carts) <= 1:
+      print carts[0][0], carts[0][1]
+      break
 
-def printAll(track, carts):
+def printCarts(carts):
   for c in carts:
     print c
+
+def printAll(track, carts):
+  printCarts(carts)  
   y = 0  
   for ty in track:
     x = 0
