@@ -88,6 +88,37 @@ def getDistances(points, fromP, toP):
       minmove = n
   return (minmove,result)  
 
+def getElement(op, el):
+  for o in op:
+    if o[0] == el[0] and o[1] == el[1]:
+      return o
+  return None  
+
+def attack(points, el, oponents):
+  s = points[el[1]][el[0]]  
+  os = None
+  if s == 'E':
+    os = 'G'
+  else:
+    os = 'E'
+
+  nextMoves = getNextMove(points, el)
+  targets = [p for p in nextMoves if points[p[1]][p[0]] == os]
+  if not targets:
+    return None
+
+  o = None
+  ohp = None
+  for n in targets:
+    tmp = getElement(oponents, n)
+    #print 'tmp', tmp, n, oponents, el
+    if not ohp or ohp > tmp[2]:
+      ohp = tmp[2]
+      o = tmp
+  if ohp:
+    return o
+  return None  
+
 def printPoints(points):    
   for y in points:
     for x in y:
@@ -100,18 +131,32 @@ def calc(filename):
 
   printPoints(points) 
 
+  elfs = findElement(points, 'E')
+  gobs = findElement(points, 'G')
+  elfs = [(e[0], e[1], 200) for e in elfs ]
+  gobs = [(e[0], e[1], 200) for e in gobs ]
+
   it = 0  
   while True:  
-    elfs = findElement(points, 'E')
-    gobs = findElement(points, 'G')
+    moved = False
     all = sorted(elfs+gobs, key=lambda tup: (tup[1],tup[0]) )
   
+    killed = []
+    hurt = []
+
     for el in all:
+      tmp = getElement(killed, el)
+      if tmp:
+        continue  
+      tmp = getElement(hurt, el)
+      if tmp:
+        el = tmp
       minmove = None
       minval = None
       os = None
       s = None
-      if el in elfs:
+      tmp = getElement(elfs, el)
+      if tmp:
         os = gobs
         us = elfs
         s = 'E'
@@ -120,32 +165,67 @@ def calc(filename):
         us = gobs
         s = 'G'
       #print 'look',s,el
-      #printPoints(points) 
+      #printPoints(points)
+
       for o in os:
         pointsd = [row[:] for row in points]
         tomove = getDistances(pointsd, o, el)
         if tomove[1] and (not minval or tomove[1] < minval):
           minmove = tomove[0]
           minval = tomove[1]
-      if minmove:    
+
+      if minmove:
+        moved = True  
         #print s,el,'move',minmove, minval
         points[minmove[1]][minmove[0]] = s  
         points[el[1]][el[0]] = '.'
 
         nus = [x for x in us if x != el]
-        nus.append(minmove)
+        #print 'test',minmove, el
+        elem = (minmove[0], minmove[1], el[2])
+        nus.append(elem)
         nus = sorted(nus, key=lambda tup: (tup[1],tup[0]) )
 
-        if el in elfs:
+        if s in 'E':
           elfs = nus
         else:
           gobs = nus
 
-    it += 1      
-    print it      
-    printPoints(points)
-    if it > 100:
+      else:
+        #print 'Attack from', s, el
+        at = attack(points, el, os) 
+        #print 'Attack', el,'->',at
+        if at:
+          moved = True
+          nos = [x for x in os if x != at]
+          if at[2] - 3 <= 0:
+            points[at[1]][at[0]] = '.'
+            print 'Killed', at
+            killed.append((at[0], at[1]))
+          else:  
+            elem = (at[0], at[1], at[2] - 3)
+            #print 'Hurt', elem
+            nos.append(elem)
+            hurt.append((at[0], at[1], at[2] - 3))
+
+          nos = sorted(nos, key=lambda tup: (tup[1],tup[0]) )
+
+          if s in 'E':
+            gobs = nos
+          else:
+            elfs = nos
+    
+    if not moved:
       break
+    it += 1      
+    print it
+    printPoints(points)
+
+  sum = 0
+  for g in gobs:
+    print g[2]
+    sum += g[2]
+  print 'sum', it-1,sum, (it-1)*sum
 
 def main():
   args = sys.argv[1:]
