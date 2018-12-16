@@ -1,6 +1,7 @@
 #!/usr/bin/python -tt
 
 import sys
+import re
 
 codes = ['addr', 'addi', 
          'mulr', 'muli', 
@@ -82,21 +83,50 @@ def matchOperations(start, stop, o, a, b, c):
     #print 'after', reg
     if stop == reg:
       cnt += 1
-      print 'operation', codes[i]
+      #print 'operation', codes[i]
   return cnt  
 
 def parse(filename):
   res = []
+  before = []
+  after = []
+  ops = []  
   with open(filename) as file:
     for line in file:
-      print line.rstrip('\n')
-  return res
+      #print line.rstrip('\n')
 
+      s = re.search( r'Before: \[(\d+), (\d+), (\d+), (\d+)\]', line)
+      if s:
+        after = []
+        ops = []
+        for i in range(1,5):
+          before.append(int(s.group(i))) 
+
+      s = re.search( r'(\d+) (\d+) (\d+) (\d+)', line)
+      if s:
+        for i in range(1,5):
+          ops.append(int(s.group(i))) 
+
+      s = re.search( r'After:  \[(\d+), (\d+), (\d+), (\d+)\]', line)
+      if s:
+        for i in range(1,5):
+          after.append(int(s.group(i))) 
+        res.append((before, after, ops))
+        #print 'Parse:',before, after, ops
+        before = []
+        after = []
+        ops = []  
+  return res
+          
 def calc(filename):
   res = parse(filename)
-
-  print matchOperations([3, 2, 1, 1], [3, 2, 2, 1], 9, 2, 1, 2)  
   
+  cnt = 0  
+  for r in res:
+    mo = matchOperations(r[0], r[1], r[2][0], r[2][1], r[2][2], r[2][3])  
+    if mo >= 3:
+      cnt += 1
+  print 'cnt', cnt
 
 def main():
   args = sys.argv[1:]
