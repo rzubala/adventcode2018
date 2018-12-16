@@ -20,70 +20,102 @@ def operation(op, a, b, c, reg):
   else:
     op = int(op)
 
-  lasti = 3  
+  lasti = 4  
 
   res = None  
   if op == 0:
     if a < lasti and b < lasti:
       res = reg[a] + reg[b]
+    else:
+      return None  
   elif op == 1:
     if a < lasti:
       res = reg[a] + b
+    else:
+      return None  
   elif op == 2:
     if a < lasti and b < lasti:
       res = reg[a] * reg[b]
+    else:
+      return None  
   elif op == 3:
     if a < lasti:
       res = reg[a] * b
+    else:
+      return None  
   elif op == 4:
     if a < lasti and b < lasti:
       res = reg[a] & reg[b]
+    else:
+      return None  
   elif op == 5:
     if a < lasti:
       res = reg[a] & b
+    else:
+      return None  
   elif op == 6:
     if a < lasti and b < lasti:
       res = reg[a] | reg[b]
+    else:
+      return None  
   elif op == 7:
     if a < lasti:
       res = reg[a] | b
+    else:
+      return None  
   elif op == 8:
     if a < lasti:
       res = reg[a]
+    else:
+      return None  
   elif op == 9:
     res = a
   elif op == 10:
     if b < lasti:
       res = 1 if a > reg[b] else 0
+    else:
+      return None  
   elif op == 11:
     if a < lasti:
       res = 1 if reg[a] > b else 0
+    else:
+      return None  
   elif op == 12:
     if a < lasti and b < lasti:
       res = 1 if reg[a] > reg[b] else 0
+    else:
+      return None  
   elif op == 13:
     if b < lasti:
       res = 1 if a == reg[b] else 0
-  elif op == 11:
+    else:
+      return None  
+  elif op == 14:
     if a < lasti:
       res = 1 if reg[a] == b else 0
-  elif op == 12:
+    else:
+      return None  
+  elif op == 15:
     if a < lasti and b < lasti:
       res = 1 if reg[a] == reg[b] else 0
-  
-  if res:  
+    else:
+      return None  
+  else:
+      return None
+
+  if c < lasti:  
     reg[c] = res
+    return True
+  return None  
 
 def matchOperations(start, stop, o, a, b, c):
   cnt = 0
-  for i in range (0,15):
+  for i in range (0,16):
     reg = start[:]
-    #print 'before', reg, codes[i], a, b, c
-    operation(str(i), a, b, c, reg)
-    #print 'after', reg
+    if not operation(str(i), a, b, c, reg):
+      continue  
     if stop == reg:
       cnt += 1
-      #print 'operation', codes[i]
   return cnt  
 
 def parse(filename):
@@ -93,8 +125,6 @@ def parse(filename):
   ops = []  
   with open(filename) as file:
     for line in file:
-      #print line.rstrip('\n')
-
       s = re.search( r'Before: \[(\d+), (\d+), (\d+), (\d+)\]', line)
       if s:
         after = []
@@ -112,7 +142,6 @@ def parse(filename):
         for i in range(1,5):
           after.append(int(s.group(i))) 
         res.append((before, after, ops))
-        #print 'Parse:',before, after, ops
         before = []
         after = []
         ops = []  
@@ -123,10 +152,10 @@ def calc(filename):
   
   cnt = 0  
   for r in res:
-    mo = matchOperations(r[0], r[1], r[2][0], r[2][1], r[2][2], r[2][3])  
-    if mo >= 3:
+    mo = matchOperations(r[0], r[1], r[2][0], r[2][1], r[2][2], r[2][3]) 
+    if mo > 2:
       cnt += 1
-  print 'cnt', cnt
+  print 'cnt', cnt, '/', len(res)
 
 def main():
   args = sys.argv[1:]
