@@ -111,7 +111,6 @@ def attack(points, el, oponents):
   ohp = None
   for n in targets:
     tmp = getElement(oponents, n)
-    #print 'tmp', tmp, n, oponents, el
     if not ohp or ohp > tmp[2]:
       ohp = tmp[2]
       o = tmp
@@ -164,8 +163,6 @@ def calc(filename, ap):
         os = elfs
         us = gobs
         s = 'G'
-      #print 'look',s,el
-      #printPoints(points)
 
       for o in os:
         pointsd = [row[:] for row in points]
@@ -176,12 +173,10 @@ def calc(filename, ap):
 
       if minmove:
         moved = True  
-        #print s,el,'move',minmove, minval
         points[minmove[1]][minmove[0]] = s  
         points[el[1]][el[0]] = '.'
 
         nus = [x for x in us if x != el]
-        #print 'test',minmove, el
         elem = (minmove[0], minmove[1], el[2])
         nus.append(elem)
         nus = sorted(nus, key=lambda tup: (tup[1],tup[0]) )
@@ -192,9 +187,7 @@ def calc(filename, ap):
         else:
           gobs = nus
 
-      #print 'Attack from', s, el
       at = attack(points, el, os) 
-      #print 'Attack', el,'->',at
       if at:
         moved = True
         if s == 'G':
@@ -205,7 +198,6 @@ def calc(filename, ap):
         nos = [x for x in os if x != at]
         if nhp <= 0:
           points[at[1]][at[0]] = '.'
-          #print 'Killed', at
           killed.append((at[0], at[1]))
 
           if s == 'G':
@@ -214,7 +206,6 @@ def calc(filename, ap):
 
         else:  
           elem = (at[0], at[1], nhp)
-          #print 'Hurt', elem
           nos.append(elem)
           hurt = [x for x in hurt if x != at]
           hurt.append(elem)
@@ -229,7 +220,6 @@ def calc(filename, ap):
     if not moved:
       break
     it += 1      
-    print ap, it
     #printPoints(points)
 
   #part2  
