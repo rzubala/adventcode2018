@@ -185,45 +185,45 @@ def calc(filename):
         elem = (minmove[0], minmove[1], el[2])
         nus.append(elem)
         nus = sorted(nus, key=lambda tup: (tup[1],tup[0]) )
+        el = elem
 
         if s in 'E':
           elfs = nus
         else:
           gobs = nus
 
-      else:
-        #print 'Attack from', s, el
-        at = attack(points, el, os) 
-        #print 'Attack', el,'->',at
-        if at:
-          moved = True
-          nos = [x for x in os if x != at]
-          if at[2] - 3 <= 0:
-            points[at[1]][at[0]] = '.'
-            print 'Killed', at
-            killed.append((at[0], at[1]))
-          else:  
-            elem = (at[0], at[1], at[2] - 3)
-            #print 'Hurt', elem
-            nos.append(elem)
-            hurt.append((at[0], at[1], at[2] - 3))
+      #print 'Attack from', s, el
+      at = attack(points, el, os) 
+      #print 'Attack', el,'->',at
+      if at:
+        moved = True
+        nos = [x for x in os if x != at]
+        if at[2] - 3 <= 0:
+          points[at[1]][at[0]] = '.'
+          print 'Killed', at
+          killed.append((at[0], at[1]))
+        else:  
+          elem = (at[0], at[1], at[2] - 3)
+          #print 'Hurt', elem
+          nos.append(elem)
+          hurt = [x for x in hurt if x != at]
+          hurt.append((at[0], at[1], at[2] - 3))
 
-          nos = sorted(nos, key=lambda tup: (tup[1],tup[0]) )
+        nos = sorted(nos, key=lambda tup: (tup[1],tup[0]) )
 
-          if s in 'E':
-            gobs = nos
-          else:
-            elfs = nos
+        if s in 'E':
+          gobs = nos
+        else:
+          elfs = nos
     
     if not moved:
       break
     it += 1      
-    print it
+    print it, '.'
     printPoints(points)
 
   sum = 0
   for g in gobs:
-    print g[2]
     sum += g[2]
   print 'sum', it-1,sum, (it-1)*sum
 
