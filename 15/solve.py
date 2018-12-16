@@ -126,10 +126,10 @@ def printPoints(points):
     print
   print  
 
-def calc(filename):
+def calc(filename, ap):
   points = parse(filename)
 
-  printPoints(points) 
+  #printPoints(points) 
 
   elfs = findElement(points, 'E')
   gobs = findElement(points, 'G')
@@ -197,17 +197,27 @@ def calc(filename):
       #print 'Attack', el,'->',at
       if at:
         moved = True
-        nos = [x for x in os if x != at]
-        if at[2] - 3 <= 0:
-          points[at[1]][at[0]] = '.'
-          print 'Killed', at
-          killed.append((at[0], at[1]))
+        if s == 'G':
+          nhp = at[2] - 3
         else:  
-          elem = (at[0], at[1], at[2] - 3)
+          nhp = at[2] - ap
+        
+        nos = [x for x in os if x != at]
+        if nhp <= 0:
+          points[at[1]][at[0]] = '.'
+          #print 'Killed', at
+          killed.append((at[0], at[1]))
+
+          if s == 'G':
+            print 'Elf died'
+            return False
+
+        else:  
+          elem = (at[0], at[1], nhp)
           #print 'Hurt', elem
           nos.append(elem)
           hurt = [x for x in hurt if x != at]
-          hurt.append((at[0], at[1], at[2] - 3))
+          hurt.append(elem)
 
         nos = sorted(nos, key=lambda tup: (tup[1],tup[0]) )
 
@@ -219,13 +229,20 @@ def calc(filename):
     if not moved:
       break
     it += 1      
-    print it, '.'
-    printPoints(points)
+    print ap, it
+    #printPoints(points)
+
+  #part2  
+  if not elfs:
+    print 'Goblins won'
+    return False
 
   sum = 0
-  for g in gobs:
+  for g in elfs: #part1 gobs
     sum += g[2]
   print 'sum', it-1,sum, (it-1)*sum
+
+  return True
 
 def main():
   args = sys.argv[1:]
@@ -234,7 +251,13 @@ def main():
     print 'usage: input.data '
     sys.exit(1)
   
-  calc(args[0])
+  ap = 10  
+  while True: 
+    print 'Attack points: ', ap
+    res = calc(args[0], ap)
+    if res:
+      break
+    ap += 1
   
 if __name__ == '__main__':
   main()
