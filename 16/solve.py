@@ -109,14 +109,16 @@ def operation(op, a, b, c, reg):
   return None  
 
 def matchOperations(start, stop, o, a, b, c):
-  cnt = 0
+  cnt = 0       
+  opc = []  
   for i in range (0,16):
     reg = start[:]
     if not operation(str(i), a, b, c, reg):
       continue  
     if stop == reg:
       cnt += 1
-  return cnt  
+      opc.append(i)
+  return (cnt, opc)  
 
 def parse(filename):
   res = []
@@ -146,25 +148,95 @@ def parse(filename):
         after = []
         ops = []  
   return res
-          
+    
+def mergeCodes(c, p):
+  res = []
+  if not p:
+    return c
+  for o in c:
+    if o in p:
+      res.append(o)
+  return res  
+    
+def printCodes(opc):
+  for t in opc:
+    print t, opc[t]
+
+def findCodes(opc):
+  #printCodes(opc)  
+  while True:  
+    sure = {}  
+    for t in opc:
+      if len(opc[t]) == 1:
+        sure[t] = opc[t]
+        
+    surecodes = []
+    for s in sure:
+      surecodes.append(sure[s][0])
+
+    for t in opc:
+      if t in sure:
+        continue
+      codes = opc[t]
+      codes = [x for x in codes if x not in surecodes]
+      opc[t] = codes
+  
+    if len(sure) == 16:
+      break
+  printCodes(opc) 
+  return opc  
+
 def calc(filename):
   res = parse(filename)
   
+  opc = {}
+
   cnt = 0  
   for r in res:
     mo = matchOperations(r[0], r[1], r[2][0], r[2][1], r[2][2], r[2][3]) 
-    if mo > 2:
+    if mo[0] > 2:
       cnt += 1
+    op = r[2][0]  
+    
+    prevopc = opc.get(op, [])
+    curopc = mo[1]
+    mopc = mergeCodes(curopc, prevopc)
+    opc[op] = mopc
+    
   print 'cnt', cnt, '/', len(res)
+
+  return findCodes(opc)  
+
+def prog(fname, pcodes):
+  reg = [0, 0, 0, 0]
+  with open(fname) as file:
+    for line in file:
+      s = re.search( r'(\d+) (\d+) (\d+) (\d+)', line)
+      if s:
+        ops = []
+        for i in range(1,5):
+          val = int(s.group(i))
+          if i == 1:
+            ops.append(pcodes[val][0])
+          else:
+            ops.append(val) 
+        operation(str(ops[0]), ops[1], ops[2], ops[3], reg)
+            
+      else:
+        print 'error'
+        sys.exit(1)  
+  print 'after', reg  
 
 def main():
   args = sys.argv[1:]
 
   if not args:
-    print 'usage: input.data '
+    print 'usage: input.data prog.data'
     sys.exit(1)
   
-  calc(args[0])
+  pcodes = calc(args[0])
+
+  prog(args[1], pcodes)  
   
 if __name__ == '__main__':
   main()
