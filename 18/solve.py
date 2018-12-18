@@ -57,24 +57,32 @@ def convert(res, m):
       x += 1
     y += 1
 
-  print '\nAfter', m   
-  printRes(res)  
+  #print '\nAfter', m   
+  #printRes(res)  
 
-def calc(filename):
-  res = parse(filename)
-
-  printRes(res) 
-  for i in range (1, 11):  
-    convert(res, i) 
-
+def getSum(res, i): 
   cntl = 0
   cntt = 0
   for line in res:
     cntt += len([n for n in line if n == '|'])
     cntl += len([n for n in line if n == '#'])
 
-  print 'res', cntl, cntt, cntl * cntt  
+  print 'res', i, cntl, cntt, cntl * cntt  
 
+def calc(filename):
+  res = parse(filename)
+
+  #printRes(res)
+  i = 1
+  #while i < 10 + 1:
+  while i < 1000 + 1:
+    convert(res, i)
+    if i % 100 == 0:
+      getSum(res,i)
+    i += 1
+  
+  # after some time it repeats every 700  
+  getSum(res,None)
 
 def main():
   args = sys.argv[1:]
