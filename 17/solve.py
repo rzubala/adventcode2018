@@ -95,7 +95,8 @@ def flow(res):
   cnt = 0  
   goDown(res, p, cnt)
 
-  print len([x for x in res if res[x] == '~' or res[x] == '|'])  
+  print 'total', len([x for x in res if res[x] == '~' or res[x] == '|'])  
+  print 'left', len([x for x in res if res[x] == '~'])  
 
 def calc(filename):
   res = parse(filename)
