@@ -2,6 +2,7 @@
 
 import sys
 import re
+from itertools import chain
 
 def getOpNum(opc):
   codes = ['addr', 'addi', 
@@ -134,7 +135,18 @@ def calc(filename):
     operation(r[0], r[1], r[2], r[3], reg)
     ipc = reg[ip] + 1
     reg[ip] = ipc
-  print 'value', reg[0]
+    #print reg
+
+  print 'value', reg[0], reg
+
+  #part2
+  #sum of factors 10551340
+  print 'part1', sum_factors(940)
+  print 'part2', sum_factors(10551340)
+
+
+def sum_factors(n):
+  return sum(set(chain.from_iterable((i, n // i) for i in range(1, int(n**0.5) + 1) if not n % i)))
 
 def main():
   args = sys.argv[1:]
