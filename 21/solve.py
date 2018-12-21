@@ -84,8 +84,8 @@ def calc(filename):
   ilen = len(ins)
   while ipc < ilen:
 
-    if ipc == 28:
-      reg4 = reg[4]
+    if ipc == 28:    #28 and reg4 because of line no 28: eqrr 4 0 2, the only appearance of reg0
+      reg4 = reg[4]   
       #part 1
       #print 'lowest value', reg4
       if reg4 in reg0l:
