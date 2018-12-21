@@ -135,7 +135,7 @@ def calc(filename):
     operation(r[0], r[1], r[2], r[3], reg)
     ipc = reg[ip] + 1
     reg[ip] = ipc
-    #print reg
+    print reg
 
   print 'value', reg[0], reg
 
