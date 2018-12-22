@@ -1,7 +1,7 @@
-#!/usr/bin/python -tt
+#!/usr/bin/python3
 
 import sys
-import networkx
+import networkx as nx
 
 # 0 = nothing, 1 = climbing gear, 2 = torch
 def getTools(e):
@@ -12,12 +12,52 @@ def getTools(e):
     if e == 2:        # narrow
       return {0, 2}       # torch, nothing
 
+def findPath(cave, t):
+  lx = t[0] + 50
+  ly = t[1] + 50
+  
+  tools = {}
+  for y in range(ly):
+    for x in range(lx):
+      tools[(x, y)] = getTools(cave[(x, y)])
+
+  print('before graph')
+  G = nx.DiGraph()    #directional graph
+
+  for y in range(ly):
+    for x in range(lx):
+      ts = tools[(x, y)]
+
+      for tool1 in ts:
+        for tool2 in ts:
+          if tool1 != tool2:
+            G.add_edge((x, y, tool1), (x, y, tool2), weight=7)
+
+      for (xn, yn) in [(x-1,y),(x+1,y),(x,y-1),(x,y+1)]:
+        if (xn,yn) == (x,y) or xn < 0 or yn < 0 or xn >= lx or yn >= ly:
+          continue
+        tsn = tools[(x,y)]
+        tsn = [t for t in tsn if t in ts]
+        for tool in tsn:
+          G.add_edge((x, y, tool), (xn, yn, tool), weight=1)
+    
+  print('after graph')
+  #path = nx.dijkstra_path_length(G, (0, 0, 0), (t[0], t[1], 0)) #path not exist
+  #print ('path 0', path)
+  path = nx.dijkstra_path_length(G, (0, 0, 1), (t[0], t[1], 1))
+  print ('path 1', path)
+  path = nx.dijkstra_path_length(G, (0, 0, 2), (t[0], t[1], 2))
+  print ('path 2', path)
+
 def calc(depth, t):
   els = {} 
   cave = {}
 
-  for y in range(0,t[1]+1000):
-    for x in range(0,t[0]+1000):
+  lx = t[0] + 50
+  ly = t[1] + 50
+
+  for y in range(ly):
+    for x in range(lx):
       if (x,y) == (0,0) or (x,y) == t:  
         gi = 0
       elif y == 0:
@@ -36,17 +76,9 @@ def calc(depth, t):
   for y in range(0,t[1]+1):
     for x in range(0,t[0]+1):
       rl += cave[(x,y)]
-  print 'risk level', rl
+  print ('risk level', rl )
 
-  G = networkx.DiGraph()    #directional graph
-  for y in range(0,t[1]+1000):
-    for x in range(0,t[0]+1000):
-      tools = getTools(cave[(x,y)])
-      for tool1 in tools:
-        for tool2 in tools:
-          if tool1 != tool2:
-            G.add_edge((x, y, tool1), (x, y, tool2), weight=7)
-
+  findPath(cave, t)              
 
 def main():
   
