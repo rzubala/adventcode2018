@@ -27,6 +27,11 @@ def inRange(n, nx, self, delta):
   d = distance(n,nx)
   r = nx[3] if self else n[3]  
   return True if (d - r)/delta <= 0 else False
+            
+def isCloser(p1, p2):
+  d1 = distance(p1, (0,0,0))  
+  d2 = distance(p2, (0,0,0))  
+  return d1 < d2    
 
 def nanoresCnt(t, res, self, delta):    
   cnt = 0  
@@ -44,12 +49,13 @@ def findLocation(res):
   minz = min(res, key = lambda t: t[2])[2]   
   maxz = max(res, key = lambda t: t[2])[2]   
 
-  widthx = maxx - minx
+  width = min([maxx - minx, maxy - miny, maxz - minz])
 
-  while True:
-    if delta > widthx:
-      break
-    delta = delta * 2  
+  delta = 1  
+  while width > 1:
+    width = width/2
+    delta = delta * 2
+  delta = delta * 2
 
   while True:
     foundNano = 0
@@ -73,11 +79,6 @@ def findLocation(res):
       minz = loc[2] - delta   
       maxz = loc[2] + delta   
       delta = delta/2
-            
-def isCloser(p1, p2):
-  d1 = distance(p1, (0,0,0))  
-  d2 = distance(p2, (0,0,0))  
-  return d1 < d2    
 
 def calc(filename):
   res = parse(filename)
@@ -85,8 +86,7 @@ def calc(filename):
 
   print nanoresCnt(maxn, res, True, 1)    
 
-  print findLocation(res)  
-  print findLocation1(res)  
+  print 'location', findLocation(res)  
 
 def main():
   args = sys.argv[1:]
