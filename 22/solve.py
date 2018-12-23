@@ -42,12 +42,8 @@ def findPath(cave, t):
           G.add_edge((x, y, tool), (xn, yn, tool), weight=1)
     
   print('after graph')
-  #path = nx.dijkstra_path_length(G, (0, 0, 0), (t[0], t[1], 0)) #path not exist
-  #print ('path 0', path)
-  path = nx.dijkstra_path_length(G, (0, 0, 1), (t[0], t[1], 1))
-  print ('path 1', path)
   path = nx.dijkstra_path_length(G, (0, 0, 2), (t[0], t[1], 2))
-  print ('path 2', path)
+  print ('path', path)
 
 def calc(depth, t):
   els = {} 
