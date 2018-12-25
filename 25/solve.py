@@ -19,8 +19,14 @@ def parse(filename):
 def calc(filename):
   res = parse(filename)
   g = nx.Graph()
+  
+  for r in res:
+    g.add_node(r)
+  
   for a in res:
     for b in res:
+      if a == b:
+        continue
       if distance(a, b) <= 3:
         g.add_edge(a, b)
 
